@@ -1,0 +1,19 @@
+{{- if  .Values.dashboard.ingress.gateway }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+spec:
+  gateways:
+    - {{ .Values.dashboard.ingress.gateway }}
+  hosts:
+    - {{ .Values.dashboard.ingress.host }}
+  http:
+    - route:
+      - destination:
+          host: {{ .Release.Name }}-dashboard
+          port:
+            number: 80
+{{- end }}

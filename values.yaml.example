@@ -1,0 +1,66 @@
+scheduler:
+  config:
+    schedules:
+    
+      # this is an empty schedule defining no start or stop actions to use with environments you want to controll manually
+      empty:
+        timezone: UTC
+        weekdays: []
+        holidays: []
+    
+      # this a schedule describing a typical work week with a long weekend
+      standard-week:
+        # Timezone used for time specs in the schedule
+        timezone: UTC
+        # Moments for starting and stopping environments could be described with "weekdays" - a weekly schedule
+        # and "holidays" - full datetime pairs for starts and stops. "Weekdays" schedules do not apply inside time
+        # intervals described by "holidays"
+        weekdays:
+          # Monday = 1, Sunday = 7
+          - days: [ 1,2,3,4,5 ]
+            start: 09:00
+            stop: 20:00
+        holidays:
+          # Make sure to use "YYYY-mm-dd HH:MM" or "YYYY-mm-dd HH:MM:SS" formats for start and stop times
+          # The stop times must precede the start times
+          # If weekday and holiday moments have the same timestamp - holiday action will be performed
+          # (and weekday action will be ignored)
+        
+          # Christmas 2022
+          - stop: 2022-12-23 22:00
+            start: 2023-01-03 09:00
+          # May day 2023
+          - stop: 2023-04-30 22:00
+            start: 2023-05-03 09:00
+      
+      two-shifts-week:
+        timezone: UTC
+        weekdays:  
+          - days: [ 1,2,3,4,5,6,7 ]
+            # Both start and stop fields can be either times or lists of times
+            start:
+              - 03:00
+              - 16:00
+            stop:
+              - 10:00
+              - 20:00
+  
+      # Environment is a named collection of namespaces to be manipulated as a whole
+      envs:
+        project-1:
+          namespaces:
+            - project-1
+          schedule: empty
+        project-2:
+          namespaces:
+            - project-2-data
+            - project-2-services
+          schedule: standard-week
+        project-3:
+          namespaces:
+            - project-3
+          schedule: standard-week
+        project-4:
+          namespaces:
+            - project-4
+          schedule: two-shifts-week

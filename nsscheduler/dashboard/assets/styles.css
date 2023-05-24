@@ -1,0 +1,12 @@
+.root-div {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    overflow: auto;
+}
+.alert {
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 40px);
+}

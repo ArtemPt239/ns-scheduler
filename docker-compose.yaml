@@ -1,0 +1,15 @@
+version: "3"
+services:
+  scheduler:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - ${PWD}/config.yaml:/usr/src/app/config.yaml:ro
+      - ${HOME}/.kube:/root/.kube
+      - ${HOME}/.aws:/root/.aws
+  dashboard:
+    build: .
+    ports:
+      - "5002:5002"
+    command: ns-dashboard --scheduler-api-url http://scheduler:5001 --listen-host 0.0.0.0 --listen-port 5002 --logging-level INFO

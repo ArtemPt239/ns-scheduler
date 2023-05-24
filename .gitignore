@@ -1,0 +1,14 @@
+__pycache__
+.idea
+.settings
+.project
+.vscode
+.pytest_cache
+.mypy_cache
+*.egg-info/
+config_example.yaml
+
+dev.ipynb
+nsscheduler/dashboard/fast-api-client
+nsscheduler/dashboard/openapi-client
+nsscheduler/dashboard/autogen_client.sh

@@ -1,0 +1,71 @@
+.styled-table {
+    margin: 25px 0;
+    font-size: 1em;
+    font-family: sans-serif;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-collapse: collapse;
+    border-radius: 20px;
+}
+
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.styled-table button {
+    width: 80px;
+    height: 40px;
+    border-radius: 10px;
+    border-style: none;
+    transition: 100ms;
+}
+
+.styled-table button:enabled {
+    background-color: #009879;
+    color: #ffffff;
+}
+
+.styled-table button:hover, button:focus {
+    background-color: #00787E;
+}
+
+.styled-table button:disabled {
+    background-color: #DDF0E1;
+}
+
+.styled-table .env-th-name {
+    min-width: 6em;
+}
+
+.styled-table .env-th-state {
+    min-width: 11em;
+}
+
+.styled-table .namespace-th-name {
+    min-width: 6em;
+}
+
+.styled-table .namespace-th-state {
+    min-width: 4em;
+}
+
+.styled-table .namespace-td {
+    font-size: 0.8em;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
