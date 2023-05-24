@@ -4,6 +4,8 @@ ns-scheduler is a tool to schedule the work time of applications deployed to the
 for development/testing purposes to not waste resources during nights, weekends, and holidays
 when no one is using them.
 
+![ns-scheduler default dashboard example](screenshot.png)
+
 The scheduler works by scaling all Deployments and StatefulSets in groups of namespaces named "environments"
 to 0 replicas and then back to the initial replica count by defined schedules. 
 
