@@ -21,6 +21,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Validate versions matching
+        run: |
+          bash tests/validate_versions_matching.sh
+
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
@@ -42,7 +46,14 @@ jobs:
 #           tags: ${{ steps.meta.outputs.tags }}
 #           labels: ${{ steps.meta.outputs.labels }}
           
-      - name: Install helm
+      - name: Package Helm chart
         run: |
-          helm version
-
+          helm package helm/chart
+          ls . 
+      
+      - name: Publish Helm chart
+        run: |
+          export CHART_VERSION=$(grep 'version:' ./helm/chart/Chart.yaml | tail -n1 | awk '{ print $2}')
+          echo ${{ github.repository }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ github.repository }}
+#          helm push ${{ github.repository }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ github.repository }}
+        
