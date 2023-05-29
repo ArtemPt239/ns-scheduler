@@ -2,7 +2,7 @@ apiVersion: v2
 name: ns-scheduler
 type: application
 version: 0.0.1
-appVersion: 0.0.1dev3
+appVersion: 0.0.1dev4
 description: Scaling up and down of workloads in namespaces by schedule
 maintainers:
   - name: Artem Petrov
