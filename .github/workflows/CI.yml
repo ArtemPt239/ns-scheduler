@@ -40,13 +40,13 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
           
       - name: Package Helm chart
         run: |
@@ -56,5 +56,7 @@ jobs:
       - name: Publish Helm chart
         run: |
           export CHART_VERSION=$(grep 'version:' ./helm/chart/Chart.yaml | tail -n1 | awk '{ print $2}')
+          ls a
+          echo  ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ env.IMAGE_NAME }}
           helm push ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ env.IMAGE_NAME }}
           # ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ env.IMAGE_NAME }}
