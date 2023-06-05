@@ -1,7 +1,7 @@
 apiVersion: v2
 name: ns-scheduler
 type: application
-version: 0.0.1
+version: 0.0.1dev5
 appVersion: 0.0.1dev5
 description: Scaling up and down of workloads in namespaces by schedule
 maintainers:
