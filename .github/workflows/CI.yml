@@ -7,6 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  USERNAME_LOWERCASE: artempt239
   IMAGE_NAME: ns-scheduler
 
 jobs:
@@ -37,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.USERNAME_LOWERCASE }}/${{ env.IMAGE_NAME }}
 
       # - name: Build and push Docker image
       #   uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
@@ -56,6 +57,5 @@ jobs:
         run: |
           export CHART_VERSION=$(grep 'version:' ./helm/chart/Chart.yaml | tail -n1 | awk '{ print $2}')
           ls -a
-          echo  ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ env.IMAGE_NAME }}
-          helm push ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ env.IMAGE_NAME }}
-          # ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ github.actor }}/charts/${{ env.IMAGE_NAME }}
+          echo  ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ env.USERNAME_LOWERCASE }}/charts/${{ env.IMAGE_NAME }}
+          helm push ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ env.USERNAME_LOWERCASE }}/charts/${{ env.IMAGE_NAME }}
