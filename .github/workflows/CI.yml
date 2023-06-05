@@ -51,11 +51,8 @@ jobs:
       - name: Package Helm chart
         run: |
           helm package helm/chart
-          ls . 
       
       - name: Publish Helm chart
         run: |
           export CHART_VERSION=$(grep 'version:' ./helm/chart/Chart.yaml | tail -n1 | awk '{ print $2}')
-          ls -a
-          echo  ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ env.USERNAME_LOWERCASE }}/charts/${{ env.IMAGE_NAME }}
-          helm push ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ env.USERNAME_LOWERCASE }}/charts/${{ env.IMAGE_NAME }}
+          helm push ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ env.USERNAME_LOWERCASE }}/charts/
