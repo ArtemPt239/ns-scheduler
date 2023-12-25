@@ -3,7 +3,7 @@ name: Create and publish a Docker image and Helm chart
 on:
   push:
     tags:
-      - *
+      - '*'
 
 env:
   REGISTRY: ghcr.io
