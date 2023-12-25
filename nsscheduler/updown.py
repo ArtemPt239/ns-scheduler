@@ -1,5 +1,6 @@
 import logging
 import time
+import re
 from enum import Enum
 
 import kubernetes
@@ -49,7 +50,7 @@ async def up(namespaces: list, batch_size: int = 0, batch_timeout: int = 0) -> N
 
     app_v1 = kubernetes.client.AppsV1Api()
 
-    for ns in namespaces:
+    for ns in resolve_namespaces(namespaces):
         deployments = app_v1.list_namespaced_deployment(ns, watch=False)
         stateful_sets = app_v1.list_namespaced_stateful_set(ns, watch=False)
 
@@ -74,7 +75,7 @@ async def down(namespaces: list) -> None:
 
     app_v1 = kubernetes.client.AppsV1Api()
 
-    for ns in reversed(namespaces):
+    for ns in reversed(resolve_namespaces(namespaces)):
         logging.info(f"Shut down namespace '{ns}'")
 
         deployments = app_v1.list_namespaced_deployment(ns, watch=False)
@@ -84,6 +85,40 @@ async def down(namespaces: list) -> None:
             modify_workload(NamespaceAction.DOWN, d, "Deployment", app_v1.patch_namespaced_deployment)
         for ss in stateful_sets.items:
             modify_workload(NamespaceAction.DOWN, ss, "StatefulSet", app_v1.patch_namespaced_stateful_set)
+
+
+def resolve_namespaces(namespaces: list) -> list:
+    """
+    Resolve Namespaces
+
+    This method takes a list of namespace patterns and returns a list of resolved namespaces that match the patterns.
+
+    :param namespaces: A list of namespace patterns to resolve.
+    :return: A list of resolved namespaces.
+
+    Example Usage:
+
+    ```python
+    namespaces = ['default', 'test-*']
+    resolved = resolve_namespaces(namespaces)
+    print(resolved)
+    ```
+    Expected Output:
+
+    ```python
+    ['default', 'test-1', 'test-2']
+    ```
+    """
+    v1 = kubernetes.client.CoreV1Api()
+    ns_list = v1.list_namespace()
+    all_namespaces = [ns.metadata.name for ns in ns_list.items]
+
+    resolved_namespaces = []
+    for pattern in namespaces:
+        compiled_pattern = re.compile(f"^{pattern}$")
+        matching_namespaces = [n for n in all_namespaces if compiled_pattern.match(n)]
+        resolved_namespaces.extend(matching_namespaces)
+    return resolved_namespaces
 
 
 async def get_state(namespaces: list) -> dict[str, NamespaceState]:
@@ -111,7 +146,7 @@ async def get_state(namespaces: list) -> dict[str, NamespaceState]:
 
     state = {}
 
-    for ns in namespaces:
+    for ns in resolve_namespaces(namespaces):
         deployments = app_v1.list_namespaced_deployment(ns, watch=False)
         stateful_sets = app_v1.list_namespaced_stateful_set(ns, watch=False)
 

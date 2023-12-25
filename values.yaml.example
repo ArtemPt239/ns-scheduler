@@ -58,7 +58,7 @@ scheduler:
           schedule: standard-week
         project-3:
           namespaces:
-            - project-3
+            - project-3-.*
           schedule: standard-week
         project-4:
           namespaces:
