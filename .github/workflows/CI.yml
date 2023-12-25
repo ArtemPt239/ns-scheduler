@@ -1,16 +1,17 @@
-name: Create and publish a Docker image
+name: Create and publish a Docker image and Helm chart
 
 on:
-  workflow_dispatch:
   push:
-    branches: ['main']
+    tags:
+      - v*
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  USERNAME_LOWERCASE: artempt239
+  IMAGE_NAME: ns-scheduler
 
 jobs:
-  build-and-push-image:
+  build-and-push-image-and-chart:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,6 +20,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Validate versions matching
+        run: |
+          bash tests/validate_versions_matching.sh
 
       - name: Log in to the Container registry
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
@@ -31,16 +38,21 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.USERNAME_LOWERCASE }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           
-      - run: echo Tags ${{ steps.meta.outputs.tags }}
-      - run: echo Labels ${{ steps.meta.outputs.labels }}
-
-#       - name: Build and push Docker image
-#         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-#         with:
-#           context: .
-#           push: true
-#           tags: ${{ steps.meta.outputs.tags }}
-#           labels: ${{ steps.meta.outputs.labels }}
-
+      - name: Package Helm chart
+        run: |
+          helm package helm/chart
+      
+      - name: Publish Helm chart
+        run: |
+          export CHART_VERSION=$(grep 'version:' ./helm/chart/Chart.yaml | tail -n1 | awk '{ print $2}')
+          helm push ${{ env.IMAGE_NAME }}-${CHART_VERSION}.tgz oci://ghcr.io/${{ env.USERNAME_LOWERCASE }}/charts/
