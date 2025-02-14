@@ -41,7 +41,14 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ "ns-scheduler" ]
-          args: ["--incluster", "--listen-host", "0.0.0.0", "--listen-port", "5001", "--logging-level", "INFO"]
+          args: 
+            - --incluster
+            - --listen-host
+            - 0.0.0.0
+            - --listen-port
+            - 5001
+            - --logging-level
+            - {{ .Values.scheduler.loglevel }}
           ports:
             - containerPort: 5001
               protocol: TCP

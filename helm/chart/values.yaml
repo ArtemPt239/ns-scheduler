@@ -7,6 +7,7 @@ image:
 
 dashboard:
   enabled: true
+  loglevel: INFO
   resources: {}
 
   ingress:
@@ -22,6 +23,7 @@ dashboard:
 
 scheduler:
   resources: {}
+  loglevel: INFO
 
   podAnnotations: {}
   podSecurityContext: {}
