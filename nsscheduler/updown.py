@@ -17,6 +17,8 @@ class NamespaceAction(Enum):
 protected_namespaces = ("kube-system",)
 updown_annotation = "ns.scheduler/replicas"
 scale_up_counters: dict[str, int] = {}
+ns_state_cache = {}
+ns_state_cache_update_time = {}
 
 
 def kube_init(args):
@@ -147,6 +149,12 @@ async def get_state(namespaces: list) -> dict[str, NamespaceState]:
     state = {}
 
     for ns in resolve_namespaces(namespaces):
+        if ns in ns_state_cache:
+            if ns_state_cache_update_time[ns] + 3 > time.time():
+                logging.debug(f"Getting cached state of namespace '{ns}'")
+                state[ns] = ns_state_cache[ns]
+                continue
+
         deployments = app_v1.list_namespaced_deployment(ns, watch=False)
         stateful_sets = app_v1.list_namespaced_stateful_set(ns, watch=False)
 
@@ -154,6 +162,8 @@ async def get_state(namespaces: list) -> dict[str, NamespaceState]:
         s_replicas, s_cpu, s_memory = sum(stateful_sets.items)
 
         state[ns] = NamespaceState(pods=d_replicas + s_replicas, cpu=d_cpu + s_cpu, memory=d_memory + s_memory)
+        ns_state_cache[ns] = state[ns]
+        ns_state_cache_update_time[ns] = time.time()
 
     logging.info(f"State: '{state}'")
     return state

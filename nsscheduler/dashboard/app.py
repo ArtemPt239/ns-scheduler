@@ -161,6 +161,22 @@ def build_app_layout() -> html.Div:
     )
 
 
+# Cache env states
+env_state_lifetime = float(4)
+env_states = {}
+env_state_times = {}
+def get_env_state(env_name: str) -> EnvStateResponse:
+    global env_states, env_state_times, env_state_lifetime
+    if env_state_times.get(env_name, 10e30) + env_state_lifetime > time.time():
+        logging.debug(f"Requesting current state for env '{env_name}'")
+        env_states[env_name] = EnvStateResponse(**requests.get(f"{base_url}/state/{env_name}").json())
+        env_state_times[env_name] = time.time()
+    else:
+        logging.debug(f"Returning cached state for env '{env_name}'")
+
+    return env_states[env_name]
+
+
 # Callbacks:
 
 
@@ -187,7 +203,7 @@ def get_state_of_env(n_interval: int, up_n_clicks: int, down_n_clicks: int, curr
             return current_tbody_children, False, ""
         if ctx.triggered_id == "state_lookup_timer":
             return (
-                generate_env_subtable(EnvStateResponse(**requests.get(f"{base_url}/state/{env_name}").json())),
+                generate_env_subtable(get_env_state(env_name)),
                 False,
                 "",
             )

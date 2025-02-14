@@ -41,7 +41,15 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ "ns-dashboard" ]
-          args: ["--scheduler-api-url", "http://{{ .Release.Name }}-scheduler:80", "--listen-host", "0.0.0.0", "--listen-port", "5001", "--logging-level", "INFO"]
+          args: 
+            - --scheduler-api-url
+            - http://{{ .Release.Name }}-scheduler:80
+            - --listen-host
+            - 0.0.0.0
+            - --listen-port
+            - 5001
+            - --logging-level
+            - {{ .Values.dashboard.loglevel }}
           ports:
             - containerPort: 5001
               protocol: TCP
