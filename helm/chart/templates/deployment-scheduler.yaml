@@ -46,7 +46,7 @@ spec:
             - --listen-host
             - 0.0.0.0
             - --listen-port
-            - 5001
+            - "5001"
             - --logging-level
             - {{ .Values.scheduler.loglevel }}
           ports:
