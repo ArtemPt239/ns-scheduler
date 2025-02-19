@@ -168,7 +168,7 @@ env_states = {}
 env_state_times = {}
 def get_env_state(env_name: str) -> EnvStateResponse:
     global env_states, env_state_times, env_state_lifetime
-    if env_state_times.get(env_name, 10e30) + env_state_lifetime > time.time():
+    if env_state_times.get(env_name, 0) + env_state_lifetime < time.time():
         logging.debug(f"Requesting current state for env '{env_name}'")
         env_states[env_name] = EnvStateResponse(**requests.get(f"{base_url}/state/{env_name}").json())
         env_state_times[env_name] = time.time()
