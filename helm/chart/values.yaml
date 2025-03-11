@@ -88,3 +88,6 @@ scheduler:
 #          - project-2-data
 #          - project-2-services
 #        schedule: main
+
+# Extra K8s manifests to create
+extraManifests: []
